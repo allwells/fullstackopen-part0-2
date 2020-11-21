@@ -1,0 +1,9 @@
+exercise 0.5: Single Page App
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server-->browser: spa.htm page <text/html>
+
+# the contents of the page are manipulated with the js that executes in the browser
+browser: executes js-code
+
+#done

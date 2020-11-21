@@ -1,0 +1,21 @@
+exercise 0.4: new note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_notes
+server-->browser: http redirect (text/html)
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+
+browser: executes js-code
+requests JSON data from server
+
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: [{content: "notes", date: "date and time stamp"}, ...]
+
+browser: execute event handler
+render notes
+
+#done
