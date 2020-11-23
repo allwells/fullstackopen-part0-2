@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas", id: 1 }]);
+  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
   const [newName, setNewName] = useState("");
 
   const nameChange = (event) => {
@@ -10,11 +10,11 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    const personObject = {
-      name: newName,
-      id: persons.length + 1,
-    };
-    setPersons(persons.concat(personObject));
+    persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    )
+      ? alert(`${newName} is already added to phonebook`)
+      : setPersons([...persons, { name: newName }]);
     setNewName("");
   };
 
@@ -30,8 +30,8 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person, id) => (
-        <p key={id}>{person.name}</p>
+      {persons.map((person, i) => (
+        <p key={i}>{person.name}</p>
       ))}
     </div>
   );
