@@ -1,32 +1,68 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios";
+import axios from "axios";
 
 const App = () => {
-  const [countries, setCountries] = useState("");
-  const [newName, setNewName] = useState("");
+  const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState("");
 
-  //   useEffect(() => {
-  //     axios.get("https://restcountries.eu/all").then((response) => {
-  //       setPersons(response.data);
-  //     });
-  //   }, []);
+  useEffect(() => {
+    axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
+      setCountries(response.data);
+    });
+  }, []);
 
   const searchChange = (event) => {
     setNewFilter(event.target.value);
   };
 
-  //   const search = countries.filter((country) =>
-  //     country.name.toLowerCase().includes(newFilter.toLowerCase())
-  //   );
+  const search = countries.filter((country) => {
+    return country.name.toLowerCase().includes(newFilter.toLowerCase());
+  });
+  if (search.length === 1) {
+    return (
+      <div>
+        {search.map((country) => (
+          <div>
+            <h1>{country.name}</h1>
+            <p>capital {country.capital}</p>
+            <p>population {country.population}</p>
+            <h2>languages</h2>
+            <ul>
+              {country.languages.map((language) => (
+                <li key={language.name}>{language.name}</li>
+              ))}
+            </ul>
+            <img src={country.flag} alt="flag" width={70}></img>
+          </div>
+        ))}
+      </div>
+    );
+  } else if (search.length > 10) {
+    return <p>Too many matches, specify another filter</p>;
+  } else {
+  }
 
   return (
     <div>
       <div>
-        find countries <input onChange={searchChange} />
+        find countries <input value={newFilter} onChange={searchChange} />
       </div>
     </div>
   );
 };
 
 export default App;
+//   } else if (search.length > 10) {
+//     return <p>Too many matches, specify another filter</p>;
+//   } else {
+//     return (
+//       <div>
+//         {search.map((country) => (
+//           <div key={country.name}>
+//             <p>{country.name}</p>
+//             <button onClick={() => setNewFilter(country.name)}>show</button>
+//           </div>
+//         ))}
+//       </div>
+//     );
+//   }
