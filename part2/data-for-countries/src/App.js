@@ -1,6 +1,56 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const Weather = ({ weather }) => {
+  if (weather) {
+    return (
+      <div>
+        <h2>weather in {weather.location.name}</h2>
+        <p>
+          <strong>temperature: </strong>
+          {weather.current.temperature}
+        </p>
+        <img src={weather.current.weather_icons[0]} alt={"weather icon"}></img>
+        <p>
+          <strong>wind: </strong>
+          {weather.current.wind_speed} mph direction {weather.current.wind_dir}
+        </p>
+      </div>
+    );
+  } else {
+    return null;
+  }
+};
+
+const Country = ({ country }) => {
+  const [newWeather, setNewWeather] = useState("");
+  const API_KEY = process.env.REACT_APP_API_KEY;
+  const WEATHER_API_KEY = "ab44cad7b62f6da3d2d39394c5970768";
+  const URL = `http://api.weatherstack.com/current?access_key=${WEATHER_API_KEY}&query=${country.capital}`;
+
+  useEffect(() => {
+    axios.get(URL).then((response) => {
+      setNewWeather(response.data);
+    });
+  }, [URL]);
+
+  return (
+    <div>
+      <h1>{country.name}</h1>
+      <p>capital {country.capital}</p>
+      <p>population {country.population}</p>
+      <h2>languages</h2>
+      <ul>
+        {country.languages.map((language) => (
+          <li key={language.name}>{language.name}</li>
+        ))}
+      </ul>
+      <img src={country.flag} alt="flag" width={70}></img>
+      <Weather weather={newWeather} />
+    </div>
+  );
+};
+
 const Countries = ({ countries, newFilter, setNewFilter }) => {
   const search = countries.filter((country) => {
     return country.name.toLowerCase().includes(newFilter.toLowerCase());
@@ -28,23 +78,6 @@ const Countries = ({ countries, newFilter, setNewFilter }) => {
       </div>
     );
   }
-};
-
-const Country = ({ country }) => {
-  return (
-    <div>
-      <h1>{country.name}</h1>
-      <p>capital {country.capital}</p>
-      <p>population {country.population}</p>
-      <h2>languages</h2>
-      <ul>
-        {country.languages.map((language) => (
-          <li key={language.name}>{language.name}</li>
-        ))}
-      </ul>
-      <img src={country.flag} alt="flag" width={70}></img>
-    </div>
-  );
 };
 
 const App = () => {
