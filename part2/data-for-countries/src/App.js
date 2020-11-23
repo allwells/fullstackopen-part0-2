@@ -25,8 +25,7 @@ const Weather = ({ weather }) => {
 const Country = ({ country }) => {
   const [newWeather, setNewWeather] = useState("");
   const API_KEY = process.env.REACT_APP_API_KEY;
-  const WEATHER_API_KEY = "ab44cad7b62f6da3d2d39394c5970768";
-  const URL = `http://api.weatherstack.com/current?access_key=${WEATHER_API_KEY}&query=${country.capital}`;
+  const URL = `http://api.weatherstack.com/current?access_key=${API_KEY}&query=${country.capital}`;
 
   useEffect(() => {
     axios.get(URL).then((response) => {
