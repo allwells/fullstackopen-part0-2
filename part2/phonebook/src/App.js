@@ -42,8 +42,22 @@ const App = () => {
       : setPersons([...persons, { name: newName, number: newNumber }]);
 
     service.create({ name: newName, number: newNumber }).then((response) => {
-      console.log(response);
+      setPersons(persons.concat(response));
     });
+    setNewName("");
+    setNewNumber("");
+  };
+
+  const deletePerson = (id, name) => {
+    window.confirm(`Delete ${name}?`)
+      ? service.remove(id).then((response) => {
+          if (response.status === 200) {
+            setPersons(persons.filter((person) => person.id !== id));
+            setNewName("");
+            setNewNumber("");
+          }
+        })
+      : console.log();
   };
 
   return (
@@ -59,7 +73,7 @@ const App = () => {
         numberChange={numberChange}
       />
       <h3>Numbers</h3>
-      <Persons filterPerson={filterPerson} />
+      <Persons filterPerson={filterPerson} deletePerson={deletePerson} />
     </div>
   );
 };
