@@ -34,12 +34,28 @@ const App = () => {
 
   const AddPerson = (event) => {
     event.preventDefault();
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    };
 
-    persons.find(
+    const check = persons.find(
       (person) => person.name.toLowerCase() === newName.toLowerCase()
-    )
-      ? alert(`${newName} is already added to phonebook`)
-      : setPersons([...persons, { name: newName, number: newNumber }]);
+    );
+
+    if (check) {
+      window.confirm(
+        `${newName} is already added to phonebook, replace old number with a new one?`
+      )
+        ? service.update(check.id, personObject).then((response) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== response.id ? person : response
+              )
+            );
+          })
+        : console.log("");
+    }
 
     service.create({ name: newName, number: newNumber }).then((response) => {
       setPersons(persons.concat(response));
