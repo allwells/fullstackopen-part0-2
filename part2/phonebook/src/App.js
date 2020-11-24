@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
+import services from "./services/services";
 import axios from "axios";
 
 const App = () => {
@@ -12,8 +13,9 @@ const App = () => {
 
   useEffect(() => {
     axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+      setPersons(response);
       setNewName("");
+      setNewNumber("");
     });
   }, []);
 
@@ -27,17 +29,24 @@ const App = () => {
     setNewFilter(event.target.value);
   };
 
-  const filterPerson = persons.filter((person) =>
-    person.name.toLowerCase().includes(newFilter.toLowerCase())
-  );
+  const filterPerson = persons
+    ? persons.filter((person) =>
+        person.name.toLowerCase().includes(newFilter.toLowerCase())
+      )
+    : [];
 
-  const addPerson = (event) => {
+  const AddPerson = (event) => {
     event.preventDefault();
+
     persons.find(
       (person) => person.name.toLowerCase() === newName.toLowerCase()
     )
       ? alert(`${newName} is already added to phonebook`)
       : setPersons([...persons, { name: newName, number: newNumber }]);
+
+    services.create({ name: newName, number: newNumber }).then((res) => {
+      console.log(res);
+    });
     setNewName("");
     setNewNumber("");
   };
@@ -48,7 +57,7 @@ const App = () => {
       <Filter newFilter={newFilter} filterChange={filterChange} />
       <h3>Add a new</h3>
       <PersonForm
-        addPerson={addPerson}
+        addPerson={AddPerson}
         newName={newName}
         newNumber={newNumber}
         nameChange={nameChange}
