@@ -3,12 +3,14 @@ import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import service from "./services/service";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     service.getAll().then((response) => {
@@ -53,6 +55,10 @@ const App = () => {
                 person.id !== response.id ? person : response
               )
             );
+            setErrorMessage(`${newName} has been updated`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 3000);
           })
         : console.log("");
     }
@@ -62,6 +68,10 @@ const App = () => {
     });
     setNewName("");
     setNewNumber("");
+    setErrorMessage(`Added ${newName}`);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 3000);
   };
 
   const deletePerson = (id, name) => {
@@ -71,6 +81,10 @@ const App = () => {
             setPersons(persons.filter((person) => person.id !== id));
             setNewName("");
             setNewNumber("");
+            setErrorMessage(`Deleted ${name}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 3000);
           }
         })
       : console.log();
@@ -79,6 +93,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter newFilter={newFilter} filterChange={filterChange} />
       <h3>Add a new</h3>
       <PersonForm
