@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [msgType, setMsgType] = useState("");
 
   useEffect(() => {
     service.getAll().then((response) => {
@@ -49,17 +50,30 @@ const App = () => {
       window.confirm(
         `${newName} is already added to phonebook, replace old number with a new one?`
       )
-        ? service.update(check.id, personObject).then((response) => {
-            setPersons(
-              persons.map((person) =>
-                person.id !== response.id ? person : response
-              )
-            );
-            setErrorMessage(`${newName} has been updated`);
-            setTimeout(() => {
-              setErrorMessage(null);
-            }, 3000);
-          })
+        ? service
+            .update(check.id, personObject)
+            .then((response) => {
+              setPersons(
+                persons.map((person) =>
+                  person.id !== response.id ? person : response
+                )
+              );
+              setMsgType("success");
+              setErrorMessage(`${newName} has been updated`);
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 3000);
+            })
+            .catch((error) => {
+              setMsgType("error");
+              setErrorMessage(
+                `Information of ${newName} has already been removed from server!`
+              );
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 3000);
+              setPersons(persons.filter((n) => n.id !== check.id));
+            })
         : console.log("");
     }
 
@@ -68,6 +82,7 @@ const App = () => {
     });
     setNewName("");
     setNewNumber("");
+    setMsgType("success");
     setErrorMessage(`Added ${newName}`);
     setTimeout(() => {
       setErrorMessage(null);
@@ -76,24 +91,37 @@ const App = () => {
 
   const deletePerson = (id, name) => {
     window.confirm(`Delete ${name}?`)
-      ? service.remove(id).then((response) => {
-          if (response.status === 200) {
-            setPersons(persons.filter((person) => person.id !== id));
-            setNewName("");
-            setNewNumber("");
-            setErrorMessage(`Deleted ${name}`);
+      ? service
+          .remove(id)
+          .then((response) => {
+            if (response.status === 200) {
+              setPersons(persons.filter((person) => person.id !== id));
+              setNewName("");
+              setNewNumber("");
+              setMsgType("success");
+              setErrorMessage(`Deleted ${name}`);
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 3000);
+            }
+          })
+          .catch((error) => {
+            setMsgType("error");
+            setErrorMessage(
+              `Information of ${name} has already been removed from server!`
+            );
             setTimeout(() => {
               setErrorMessage(null);
             }, 3000);
-          }
-        })
+            setPersons(persons.filter((n) => n.id !== id));
+          })
       : console.log();
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} />
+      <Notification message={errorMessage} messageType={msgType} />
       <Filter newFilter={newFilter} filterChange={filterChange} />
       <h3>Add a new</h3>
       <PersonForm
